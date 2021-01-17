@@ -9,26 +9,38 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.crisspian.recyclerviewexamples_01.adapter.ItemAdapter;
+import com.crisspian.recyclerviewexamples_01.databinding.FragmentFirstBinding;
 import com.crisspian.recyclerviewexamples_01.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstFragment extends Fragment {
+public class FirstFragment extends Fragment implements ItemAdapter.IPasselement {
 
+    private FragmentFirstBinding mBinding;
+    private List<Item> listItem = new ArrayList<>();
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_first, container, false);
+         mBinding = FragmentFirstBinding
+                .inflate(inflater, container, false);
+
+
+
+
+        return mBinding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-       // NavHostFragment.findNavController(FirstFragment.this).navigate(directions);
+        ItemAdapter adapter = new ItemAdapter(returnItemList(), this);
+        mBinding.rvItem.setAdapter(adapter);
+        mBinding.rvItem.setLayoutManager((new LinearLayoutManager(getContext())));
     }
 
 
@@ -61,5 +73,16 @@ public class FirstFragment extends Fragment {
         Item item12 = new Item("Wesley Armstrong","https://unsplash.com/photos/q0wqYpyWDpc/download?force=true&w=640");
         listItem.add(item12);
         return listItem;
+    }
+
+    @Override
+    public void passelement(Item item) {
+        Bundle mBundle = new Bundle();
+        mBundle.putString("clave1",item.getItemDescription());
+        mBundle.putString("clave2", item.getUrlImage());
+        NavHostFragment.findNavController(FirstFragment.this)
+                .navigate(R.id.action_FirstFragment_to_SecondFragment, mBundle);
+
+
     }
 }
